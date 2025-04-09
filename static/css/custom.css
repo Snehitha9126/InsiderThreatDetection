@@ -1,0 +1,135 @@
+/* Custom styles for Insider Threat Detection System */
+
+/* General styles */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Risk indicator styles */
+.risk-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+/* Timeline styles */
+.timeline {
+    position: relative;
+    margin: 0 auto;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 2px;
+    background-color: var(--bs-gray-600);
+    top: 0;
+    bottom: 0;
+    left: 20px;
+    margin-left: -1px;
+}
+
+.timeline-item {
+    padding: 10px 40px;
+    position: relative;
+    background-color: inherit;
+    width: 100%;
+}
+
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 12px;
+    background-color: var(--bs-primary);
+    border: 2px solid var(--bs-primary);
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.timeline-date {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.activity-item {
+    margin-bottom: 15px;
+    border-left: 3px solid var(--bs-gray-600);
+    padding-left: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    position: relative;
+}
+
+.activity-item.suspicious {
+    border-left-color: var(--bs-danger);
+}
+
+.activity-time {
+    font-size: 0.85rem;
+    color: var(--bs-gray-500);
+}
+
+/* Attention visualization styles */
+.attention-heatmap rect.cell {
+    stroke: var(--bs-dark);
+    stroke-width: 1px;
+}
+
+.attention-tooltip {
+    position: absolute;
+    padding: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 12px;
+    z-index: 1000;
+}
+
+/* Clickable rows */
+.user-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation for attention weights */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.high-attention {
+    animation: pulse 2s infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .timeline::after {
+        left: 15px;
+    }
+    
+    .timeline-item {
+        padding-left: 30px;
+    }
+    
+    .timeline-item::after {
+        left: 7px;
+    }
+}

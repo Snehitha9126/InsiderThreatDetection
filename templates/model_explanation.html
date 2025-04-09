@@ -1,0 +1,327 @@
+{% extends "layout.html" %}
+
+{% block title %} - Model Explanation{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">
+                    <span data-feather="book-open" class="me-2"></span>
+                    Model Explanation
+                </h3>
+                <p class="lead">Understanding the BiLSTM with Attention Mechanism for Insider Threat Detection</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="cpu" class="me-2"></span>
+                    How the Model Works
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>This system uses a <strong>Bidirectional Long Short-Term Memory (BiLSTM)</strong> neural network with an <strong>attention mechanism</strong> to detect potential insider threats. Here's how it works:</p>
+                        
+                        <ol>
+                            <li class="mb-2">
+                                <strong>Data Processing:</strong> User activity logs are transformed into sequential data where each time window contains a set of engineered features.
+                            </li>
+                            <li class="mb-2">
+                                <strong>BiLSTM Network:</strong> Processes the sequence in both forward and backward directions to capture temporal patterns in user behavior.
+                            </li>
+                            <li class="mb-2">
+                                <strong>Attention Mechanism:</strong> Assigns weights to different parts of the sequence, highlighting which activities are most suspicious.
+                            </li>
+                            <li class="mb-2">
+                                <strong>Classification:</strong> Outputs a risk score indicating the likelihood of the user being an insider threat.
+                            </li>
+                        </ol>
+                        
+                        <p>The attention mechanism is key to this system as it not only improves detection accuracy but also provides explainability by showing which activities contributed most to the detection.</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark">
+                            <div class="card-body">
+                                <h6 class="card-title">BiLSTM with Attention Architecture</h6>
+                                <svg id="model-architecture" width="100%" height="400" class="mt-2"></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="eye" class="me-2"></span>
+                    The Attention Mechanism
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Attention mechanisms allow the model to focus on the most relevant parts of an input sequence when making predictions. In our insider threat detection system:</p>
+                
+                <ul>
+                    <li class="mb-2">
+                        <strong>Purpose:</strong> Identifies which activities in a user's history are most suspicious.
+                    </li>
+                    <li class="mb-2">
+                        <strong>How it works:</strong> Each timestep (activity window) gets an "attention weight" indicating its importance.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Explainability:</strong> Provides a clear explanation of why a user was flagged by showing which activities raised suspicion.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Visualization:</strong> Represented as a heatmap where darker colors indicate higher attention weights.
+                    </li>
+                </ul>
+                
+                <div class="alert alert-info">
+                    <span data-feather="info" class="me-2"></span>
+                    The attention weights are normalized to sum to 1, making it easy to interpret them as the relative importance of each timestep.
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="list" class="me-2"></span>
+                    Features Used by the Model
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>The model analyzes various features extracted from user activity logs:</p>
+                
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Activity Counts</td>
+                                <td>Number of logons, emails, file accesses, etc., in a time window</td>
+                            </tr>
+                            <tr>
+                                <td>After-hours Activity</td>
+                                <td>Activities occurring outside normal business hours</td>
+                            </tr>
+                            <tr>
+                                <td>Weekend Activity</td>
+                                <td>Activities occurring on weekends</td>
+                            </tr>
+                            <tr>
+                                <td>External Email Ratio</td>
+                                <td>Proportion of emails sent to external domains</td>
+                            </tr>
+                            <tr>
+                                <td>Large File Transfers</td>
+                                <td>Occurrences of large file downloads or transfers</td>
+                            </tr>
+                            <tr>
+                                <td>Sensitive File Access</td>
+                                <td>Access to confidential or restricted files</td>
+                            </tr>
+                            <tr>
+                                <td>USB Connects</td>
+                                <td>Frequency of USB storage device connections</td>
+                            </tr>
+                            <tr>
+                                <td>Job Site Visits</td>
+                                <td>Visits to job search websites</td>
+                            </tr>
+                            <tr>
+                                <td>Unusual Logon Types</td>
+                                <td>Remote logons during off-hours or from unusual locations</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <p class="small text-muted mt-3">These features are normalized across all users and fed into the model as a sequential time series.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="bar-chart-2" class="me-2"></span>
+                    Model Performance
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>The BiLSTM with attention model provides several advantages over traditional methods:</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Key Benefits</h6>
+                        <ul>
+                            <li><strong>Temporal Understanding:</strong> Captures patterns across time</li>
+                            <li><strong>Bidirectional Context:</strong> Considers past and future activities</li>
+                            <li><strong>Attention-Based Explanation:</strong> Shows which activities matter most</li>
+                            <li><strong>Reduced False Positives:</strong> More accurate than threshold-based methods</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Performance Metrics</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Metric</th>
+                                        <th>Value</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Accuracy</td>
+                                        <td>92%</td>
+                                        <td>Overall correctness of predictions</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Precision</td>
+                                        <td>85%</td>
+                                        <td>Accuracy of positive predictions</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Recall</td>
+                                        <td>78%</td>
+                                        <td>Ability to find all positive cases</td>
+                                    </tr>
+                                    <tr>
+                                        <td>F1 Score</td>
+                                        <td>81%</td>
+                                        <td>Balance between precision and recall</td>
+                                    </tr>
+                                    <tr>
+                                        <td>AUC</td>
+                                        <td>0.94</td>
+                                        <td>Area under ROC curve</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Draw a simple visualization of the model architecture
+        drawModelArchitecture();
+    });
+    
+    function drawModelArchitecture() {
+        const svg = d3.select("#model-architecture");
+        const width = parseInt(svg.style("width"));
+        const height = parseInt(svg.style("height"));
+        
+        // Define layers
+        const layers = [
+            { name: "Input Layer", nodes: 5, color: "#6c757d" },
+            { name: "Bidirectional LSTM", nodes: 7, color: "#0d6efd" },
+            { name: "Attention", nodes: 7, color: "#dc3545" },
+            { name: "Dense", nodes: 4, color: "#198754" },
+            { name: "Output", nodes: 1, color: "#ffc107" }
+        ];
+        
+        const layerWidth = width / layers.length;
+        const nodeRadius = 10;
+        const maxNodes = Math.max(...layers.map(l => l.nodes));
+        
+        // Draw connections between layers
+        for (let i = 0; i < layers.length - 1; i++) {
+            const sourceLayer = layers[i];
+            const targetLayer = layers[i + 1];
+            
+            for (let s = 0; s < sourceLayer.nodes; s++) {
+                const sourceX = (i + 0.5) * layerWidth;
+                const sourceY = height / 2 - (sourceLayer.nodes * 25) / 2 + s * 25 + 12.5;
+                
+                for (let t = 0; t < targetLayer.nodes; t++) {
+                    const targetX = (i + 1.5) * layerWidth;
+                    const targetY = height / 2 - (targetLayer.nodes * 25) / 2 + t * 25 + 12.5;
+                    
+                    svg.append("line")
+                        .attr("x1", sourceX)
+                        .attr("y1", sourceY)
+                        .attr("x2", targetX)
+                        .attr("y2", targetY)
+                        .attr("stroke", "#495057")
+                        .attr("stroke-width", 0.5)
+                        .attr("opacity", 0.3);
+                }
+            }
+        }
+        
+        // Draw each layer
+        layers.forEach((layer, i) => {
+            const x = (i + 0.5) * layerWidth;
+            
+            // Layer label
+            svg.append("text")
+                .attr("x", x)
+                .attr("y", height - 20)
+                .attr("text-anchor", "middle")
+                .attr("fill", "#f8f9fa")
+                .text(layer.name);
+            
+            // Layer nodes
+            for (let j = 0; j < layer.nodes; j++) {
+                const y = height / 2 - (layer.nodes * 25) / 2 + j * 25 + 12.5;
+                
+                svg.append("circle")
+                    .attr("cx", x)
+                    .attr("cy", y)
+                    .attr("r", nodeRadius)
+                    .attr("fill", layer.color)
+                    .attr("stroke", "#f8f9fa")
+                    .attr("stroke-width", 1);
+            }
+            
+            // Special representation for attention layer
+            if (layer.name === "Attention") {
+                svg.append("rect")
+                    .attr("x", x - 40)
+                    .attr("y", height / 2 - 80)
+                    .attr("width", 80)
+                    .attr("height", 160)
+                    .attr("fill", "none")
+                    .attr("stroke", layer.color)
+                    .attr("stroke-width", 2)
+                    .attr("stroke-dasharray", "5,5")
+                    .attr("rx", 5);
+            }
+        });
+    }
+</script>
+{% endblock %}

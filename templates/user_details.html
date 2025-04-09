@@ -1,0 +1,483 @@
+{% extends "layout.html" %}
+
+{% block title %} - User Details{% endblock %}
+
+{% block head %}
+<style>
+    .timeline {
+        position: relative;
+        margin: 0 auto;
+    }
+    
+    .timeline::after {
+        content: '';
+        position: absolute;
+        width: 2px;
+        background-color: var(--bs-gray-600);
+        top: 0;
+        bottom: 0;
+        left: 20px;
+        margin-left: -1px;
+    }
+    
+    .timeline-item {
+        padding: 10px 40px;
+        position: relative;
+        background-color: inherit;
+        width: 100%;
+    }
+    
+    .timeline-item::after {
+        content: '';
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        left: 12px;
+        background-color: var(--bs-primary);
+        border: 2px solid var(--bs-primary);
+        top: 15px;
+        border-radius: 50%;
+        z-index: 1;
+    }
+    
+    .timeline-date {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+    
+    .activity-item {
+        margin-bottom: 15px;
+        border-left: 3px solid var(--bs-gray-600);
+        padding-left: 15px;
+        position: relative;
+    }
+    
+    .activity-item.suspicious {
+        border-left-color: var(--bs-danger);
+    }
+    
+    .activity-time {
+        font-size: 0.85rem;
+        color: var(--bs-gray-500);
+    }
+    
+    .attention-heatmap rect.cell {
+        stroke: var(--bs-dark);
+        stroke-width: 1px;
+    }
+    
+    .attention-tooltip {
+        position: absolute;
+        padding: 8px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 4px;
+        pointer-events: none;
+        font-size: 12px;
+        z-index: 1000;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">User Details</li>
+            </ol>
+        </nav>
+        
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h3 class="card-title mb-1">
+                            <span data-feather="user" class="me-2"></span>
+                            {{ user.username }}
+                        </h3>
+                        <p class="text-muted mb-2">{{ user.email }} | {{ user.department }} | {{ user.position }}</p>
+                        <div class="d-flex align-items-center">
+                            <span class="me-3">Risk Level:</span>
+                            <div class="progress flex-grow-1" style="height: 8px; max-width: 200px;">
+                                <div class="progress-bar 
+                                    {% if threat.risk_score >= 0.75 %}bg-danger
+                                    {% elif threat.risk_score >= 0.5 %}bg-warning
+                                    {% elif threat.risk_score >= 0.25 %}bg-info
+                                    {% else %}bg-success{% endif %}"
+                                    role="progressbar" 
+                                    style="width: {{ threat.risk_score * 100 }}%;"
+                                    aria-valuenow="{{ threat.risk_score * 100 }}" 
+                                    aria-valuemin="0" 
+                                    aria-valuemax="100"></div>
+                            </div>
+                            <span class="ms-2">{{ "%.1f"|format(threat.risk_score * 100) }}%</span>
+                        </div>
+                    </div>
+                    <a href="/dashboard" class="btn btn-outline-secondary">
+                        <span data-feather="arrow-left" class="me-1"></span>
+                        Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="clock" class="me-2"></span>
+                    Activity Timeline
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if activities %}
+                <div class="timeline" id="activity-timeline">
+                    <!-- Timeline content will be populated by JS -->
+                    <div class="d-flex justify-content-center my-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <span data-feather="calendar" style="width: 48px; height: 48px;" class="text-muted mb-3"></span>
+                    <p class="mb-0">No activity data available for this user.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="alert-circle" class="me-2"></span>
+                    Risk Assessment
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-4">
+                    <h6>Overall Risk Score</h6>
+                    <div class="d-flex align-items-center">
+                        <div class="progress flex-grow-1" style="height: 12px;">
+                            <div class="progress-bar 
+                                {% if threat.risk_score >= 0.75 %}bg-danger
+                                {% elif threat.risk_score >= 0.5 %}bg-warning
+                                {% elif threat.risk_score >= 0.25 %}bg-info
+                                {% else %}bg-success{% endif %}"
+                                role="progressbar" 
+                                style="width: {{ threat.risk_score * 100 }}%;"
+                                aria-valuenow="{{ threat.risk_score * 100 }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100"></div>
+                        </div>
+                        <span class="ms-2 fw-bold">{{ "%.1f"|format(threat.risk_score * 100) }}%</span>
+                    </div>
+                </div>
+                
+                <h6>Risk Factors</h6>
+                <div id="risk-factors">
+                    <!-- Will be populated by JS based on attention weights -->
+                    <div class="d-flex justify-content-center my-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="bar-chart-2" class="me-2"></span>
+                    Attention Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="small text-muted mb-3">
+                    The attention heatmap shows which activities the model focused on when detecting suspicious behavior.
+                    Darker colors indicate higher attention weights.
+                </p>
+                
+                <div id="attention-heatmap" class="mb-3">
+                    <!-- Will be populated by D3.js -->
+                </div>
+                
+                <div class="small text-center text-muted">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Low Attention</span>
+                        <div class="d-flex">
+                            {% for i in range(5) %}
+                            <div style="width: 20px; height: 20px; background-color: rgba(220, 53, 69, {{ 0.2 + (i * 0.2) }});"></div>
+                            {% endfor %}
+                        </div>
+                        <span>High Attention</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="trending-up" class="me-2"></span>
+                    Behavior Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>Activity Distribution</h6>
+                        <canvas id="activityChart" width="100%" height="250"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>Time of Day Activity</h6>
+                        <canvas id="timeOfDayChart" width="100%" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/timeline.js') }}"></script>
+<script src="{{ url_for('static', filename='js/attention_vis.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch user activity data for timeline
+        fetch('/api/user_activity/{{ user.id }}')
+            .then(response => response.json())
+            .then(activities => {
+                // Fetch attention weights
+                return fetch('/api/attention/{{ user.id }}')
+                    .then(response => response.json())
+                    .then(attentionData => {
+                        // Initialize timeline with both activities and attention data
+                        initTimeline(activities, attentionData);
+                        
+                        // Initialize attention visualization
+                        if (attentionData) {
+                            initAttentionVisualization(attentionData);
+                            updateRiskFactors(attentionData);
+                        }
+                        
+                        // Activity distribution chart
+                        initActivityChart(activities);
+                        
+                        // Time of day chart
+                        initTimeOfDayChart(activities);
+                    });
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                document.getElementById('activity-timeline').innerHTML = 
+                    '<div class="alert alert-danger">Error loading activity data</div>';
+            });
+    });
+    
+    function updateRiskFactors(attentionData) {
+        // Clear loading spinner
+        document.getElementById('risk-factors').innerHTML = '';
+        
+        // If no attention data, show message
+        if (!attentionData || !attentionData.weights || !attentionData.feature_names) {
+            document.getElementById('risk-factors').innerHTML = 
+                '<div class="alert alert-info">No risk factor data available</div>';
+            return;
+        }
+        
+        // Get top features based on attention weights
+        const topFeatures = [];
+        const featureWeights = {};
+        
+        // Average weights for each feature
+        attentionData.weights.forEach((weight, i) => {
+            attentionData.feature_names.forEach(feature => {
+                if (!featureWeights[feature]) {
+                    featureWeights[feature] = 0;
+                }
+                featureWeights[feature] += weight;
+            });
+        });
+        
+        // Sort features by weight
+        const sortedFeatures = Object.keys(featureWeights).sort((a, b) => 
+            featureWeights[b] - featureWeights[a]);
+        
+        // Take top 5 features
+        const riskFactorsHtml = sortedFeatures.slice(0, 5).map(feature => {
+            const normalizedWeight = Math.min(1, featureWeights[feature] / attentionData.weights.length);
+            const percentage = Math.round(normalizedWeight * 100);
+            
+            let bgClass = 'bg-success';
+            if (percentage >= 75) {
+                bgClass = 'bg-danger';
+            } else if (percentage >= 50) {
+                bgClass = 'bg-warning';
+            } else if (percentage >= 25) {
+                bgClass = 'bg-info';
+            }
+            
+            // Format feature name for display
+            const displayName = feature
+                .replace(/_/g, ' ')
+                .replace(/count/g, '')
+                .trim()
+                .split(' ')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+            
+            return `
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span>${displayName}</span>
+                        <span class="small text-muted">${percentage}%</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar ${bgClass}" role="progressbar" 
+                            style="width: ${percentage}%;" 
+                            aria-valuenow="${percentage}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100"></div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        document.getElementById('risk-factors').innerHTML = riskFactorsHtml;
+    }
+    
+    function initActivityChart(activities) {
+        // Count activities by type
+        const activityCounts = {
+            'logon': 0,
+            'device': 0,
+            'email': 0,
+            'file': 0,
+            'web': 0
+        };
+        
+        activities.forEach(activity => {
+            if (activityCounts.hasOwnProperty(activity.activity_type)) {
+                activityCounts[activity.activity_type]++;
+            }
+        });
+        
+        // Create chart
+        const ctx = document.getElementById('activityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Logon', 'Device', 'Email', 'File', 'Web'],
+                datasets: [{
+                    label: 'Activity Count',
+                    data: [
+                        activityCounts.logon,
+                        activityCounts.device,
+                        activityCounts.email,
+                        activityCounts.file,
+                        activityCounts.web
+                    ],
+                    backgroundColor: [
+                        'rgba(13, 110, 253, 0.7)',   // Primary
+                        'rgba(25, 135, 84, 0.7)',    // Success
+                        'rgba(220, 53, 69, 0.7)',    // Danger
+                        'rgba(255, 193, 7, 0.7)',    // Warning
+                        'rgba(13, 202, 240, 0.7)'    // Info
+                    ],
+                    borderColor: [
+                        'rgb(13, 110, 253)',
+                        'rgb(25, 135, 84)',
+                        'rgb(220, 53, 69)',
+                        'rgb(255, 193, 7)',
+                        'rgb(13, 202, 240)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    function initTimeOfDayChart(activities) {
+        // Group activities by hour
+        const hourCounts = Array(24).fill(0);
+        
+        activities.forEach(activity => {
+            const activityDate = new Date(activity.timestamp);
+            const hour = activityDate.getHours();
+            hourCounts[hour]++;
+        });
+        
+        // Create time labels (0-23 hours)
+        const timeLabels = Array.from({length: 24}, (_, i) => {
+            const hour = i % 12 || 12;
+            const amPm = i < 12 ? 'AM' : 'PM';
+            return `${hour}${amPm}`;
+        });
+        
+        // Create chart
+        const ctx = document.getElementById('timeOfDayChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Activity Count',
+                    data: hourCounts,
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    borderColor: 'rgba(13, 110, 253, 0.8)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+{% endblock %}

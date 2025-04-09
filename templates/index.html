@@ -1,0 +1,136 @@
+{% extends "layout.html" %}
+
+{% block title %} - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <span data-feather="shield" class="me-2"></span>
+                    Insider Threat Detection System
+                </h2>
+                <p class="lead">A deep learning approach to detect potential insider threats using BiLSTM with attention mechanism</p>
+                <hr>
+                <p>This system analyzes user activities from various sources (logons, device usage, emails, file access, and web browsing) to identify suspicious behavior patterns that might indicate an insider threat.</p>
+                <div class="d-flex">
+                    <a href="/dashboard" class="btn btn-primary me-2">View Dashboard</a>
+                    <a href="/explanation" class="btn btn-secondary">Learn About the Model</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="activity" class="me-2"></span>
+                    Features
+                </h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex">
+                        <span data-feather="check-circle" class="text-success me-2"></span>
+                        BiLSTM neural network with attention mechanism
+                    </li>
+                    <li class="list-group-item d-flex">
+                        <span data-feather="check-circle" class="text-success me-2"></span>
+                        Multi-source activity analysis (logons, devices, emails, files, web)
+                    </li>
+                    <li class="list-group-item d-flex">
+                        <span data-feather="check-circle" class="text-success me-2"></span>
+                        Visual explanation of model decisions
+                    </li>
+                    <li class="list-group-item d-flex">
+                        <span data-feather="check-circle" class="text-success me-2"></span>
+                        Temporal analysis of user behavior
+                    </li>
+                    <li class="list-group-item d-flex">
+                        <span data-feather="check-circle" class="text-success me-2"></span>
+                        Risk scoring and alert system
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="info" class="me-2"></span>
+                    About Insider Threats
+                </h5>
+            </div>
+            <div class="card-body">
+                <p>Insider threats are security risks that originate from within an organization. They typically involve:</p>
+                <ul>
+                    <li><strong>Data exfiltration</strong> - Unauthorized copying or transferring of sensitive data</li>
+                    <li><strong>Sabotage</strong> - Deliberate disruption of systems or business operations</li>
+                    <li><strong>Fraud</strong> - Manipulation of systems for financial or personal gain</li>
+                    <li><strong>Intellectual property theft</strong> - Stealing trade secrets or proprietary information</li>
+                </ul>
+                <p>This detection system uses machine learning to identify behavioral patterns associated with these threats.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <span data-feather="layers" class="me-2"></span>
+                    How It Works
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="card h-100 border-light">
+                            <div class="card-body">
+                                <span data-feather="database" style="width: 48px; height: 48px;" class="text-primary mb-2"></span>
+                                <h5>Data Collection</h5>
+                                <p class="small">Collects user activity logs from multiple sources</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="card h-100 border-light">
+                            <div class="card-body">
+                                <span data-feather="filter" style="width: 48px; height: 48px;" class="text-info mb-2"></span>
+                                <h5>Preprocessing</h5>
+                                <p class="small">Transforms raw logs into temporal sequences with engineered features</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="card h-100 border-light">
+                            <div class="card-body">
+                                <span data-feather="cpu" style="width: 48px; height: 48px;" class="text-warning mb-2"></span>
+                                <h5>ML Analysis</h5>
+                                <p class="small">BiLSTM model processes sequences and assigns attention weights</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="card h-100 border-light">
+                            <div class="card-body">
+                                <span data-feather="bell" style="width: 48px; height: 48px;" class="text-danger mb-2"></span>
+                                <h5>Alert System</h5>
+                                <p class="small">Flags suspicious users based on risk score thresholds</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
