@@ -4,3 +4,5 @@ numpy
 scikit-learn
 joblib
 gunicorn
+flask_sqlalchemy
+psycopg2-binary
